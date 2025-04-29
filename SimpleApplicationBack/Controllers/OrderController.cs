@@ -42,54 +42,68 @@ namespace SimpleApplicationBack.Controllers
             if (!_repository.OrderExists(OrderId))
                 return NotFound();
 
-            var Order = _mapper.Map<OrderDTO>(_repository.GetOrder(OrderId));
+            var orders = _repository.GetOrder(OrderId);
+
+            var OrdersDto = _mapper.Map<OrderDTO>(orders);
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            return Ok(Order);
+            return Ok(OrdersDto);
         }
 
         [HttpPost]
-        [ProducesResponseType(204)]
+        [ProducesResponseType(201)]
         [ProducesResponseType(400)]
-        public IActionResult CreateOrder([FromBody] OrderDTO OrderDto)
+        public IActionResult CreateOrder([FromBody] OrderCreateDTO orderDto)
         {
-            if (OrderDto == null)
+            if (orderDto == null)
                 return BadRequest("Order data is null");
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var Order = _mapper.Map<Order>(OrderDto);
-            _repository.CreateOrder(Order);
+            var order = _mapper.Map<Order>(orderDto);
 
-            return Ok(Order);
+            foreach (var op in order.OrderProducts)
+            {
+                op.Product = null;
+            }
+
+            _repository.CreateOrder(order);
+
+            var orderToReturn = _mapper.Map<OrderDTO>(order);
+            return Ok(orderToReturn);
         }
 
         [HttpPut]
         [ProducesResponseType(400)]
         [ProducesResponseType(204)]
         [ProducesResponseType(404)]
-        public IActionResult UpdateOrder(Guid id, [FromBody] OrderDTO OrderDto)
+        public IActionResult UpdateOrder(Guid id, [FromBody] OrderCreateDTO orderDto)
         {
-            if (OrderDto == null)
+            if (orderDto == null)
                 return BadRequest("Order data is null");
 
-            if (id != OrderDto.Id)
-                return BadRequest("different ids");
+            if (id != orderDto.Id)
+                return BadRequest("Different IDs");
 
             if (!_repository.OrderExists(id))
-                return BadRequest("Specified Order not exists in db");
+                return NotFound("Specified order does not exist in DB");
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var Order = _mapper.Map<Order>(OrderDto);
+            var order = _mapper.Map<Order>(orderDto);
 
-            if (!_repository.UpdateOrder(Order))
+            foreach (var op in order.OrderProducts)
             {
-                ModelState.AddModelError("", "Somthing went wrong updating Order");
+                op.Product = null;
+            }
+
+            if (!_repository.UpdateOrder(order))
+            {
+                ModelState.AddModelError("", "Something went wrong updating order");
                 return StatusCode(500, ModelState);
             }
 
@@ -102,17 +116,23 @@ namespace SimpleApplicationBack.Controllers
         [ProducesResponseType(404)]
         public IActionResult DeleteOrder(Guid OrderId)
         {
-            if (!_repository.OrderExists(OrderId))
-                return NotFound();
-
-            var OrderToDelete = _repository.GetOrder(OrderId);
-
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            if (!_repository.DeleteOrder(OrderToDelete))
+            if (!_repository.OrderExists(OrderId))
+                return NotFound();
+
+            var orderToDelete = _repository.GetOrderWithOrderProducts(OrderId); 
+
+            foreach (var op in orderToDelete.OrderProducts.ToList())
+            {
+                _repository.DeleteOrderProduct(op);
+            }
+
+            if (!_repository.DeleteOrder(orderToDelete))
             {
                 ModelState.AddModelError("", "Something went wrong deleting Order");
+                return StatusCode(500, ModelState);
             }
 
             return NoContent();

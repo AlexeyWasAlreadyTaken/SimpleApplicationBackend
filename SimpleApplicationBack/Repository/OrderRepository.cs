@@ -23,11 +23,11 @@ namespace SimpleApplicationBack.Repository
         }
         public Order GetOrder(Guid id)
         {
-            return _context.Orders.Where(p => p.Id == id).FirstOrDefault();
+            return _context.Orders.Where(p => p.Id == id).Include(o => o.OrderProducts).ThenInclude(op => op.Product).FirstOrDefault();
         }
         public Order GetOrder(int number)
         {
-            return _context.Orders.Where(p => p.Number == number).FirstOrDefault();
+            return _context.Orders.Where(p => p.Number == number).Include(o => o.OrderProducts).ThenInclude(op => op.Product).FirstOrDefault();
         }
         public bool OrderExists(Guid id)
         {
@@ -52,6 +52,15 @@ namespace SimpleApplicationBack.Repository
         {
             var saved = _context.SaveChanges();
             return saved > 0 ? true : false;
+        }
+        public Order GetOrderWithOrderProducts(Guid orderId)
+        {
+            return _context.Orders.Include(o => o.OrderProducts).FirstOrDefault(o => o.Id == orderId);
+        }
+        public bool DeleteOrderProduct(OrderProduct op)
+        {
+            _context.OrderProducts.Remove(op);
+            return Save();
         }
 
     }

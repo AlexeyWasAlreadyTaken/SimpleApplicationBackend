@@ -1,4 +1,5 @@
-﻿using SimpleApplicationBack.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using SimpleApplicationBack.Models;
 
 namespace SimpleApplicationBack.Interfaces
 {
@@ -12,6 +13,8 @@ namespace SimpleApplicationBack.Interfaces
         public bool CreateOrder(Order order);
         public bool UpdateOrder(Order order);
         public bool DeleteOrder(Order order);
+        public Order GetOrderWithOrderProducts(Guid orderId);
+        public bool DeleteOrderProduct(OrderProduct op);
         public bool Save();
     }
 }

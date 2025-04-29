@@ -16,6 +16,10 @@ namespace SimpleApplicationBack.Helper
             CreateMap<OrderProduct, OrderProductDTO>();
             CreateMap<OrderDTO, Order>();
             CreateMap<OrderProductDTO, OrderProduct>();
+
+            CreateMap<OrderCreateDTO, Order>();
+            CreateMap<OrderProductCreateDTO, OrderProduct>()
+                .ForMember(dest => dest.Product, opt => opt.Ignore());
         }
     }
 }
