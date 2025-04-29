@@ -696,7 +696,7 @@
           "orderProducts": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/Product"
+              "$ref": "#/components/schemas/OrderProductDTO"
             },
             "nullable": true
           }
@@ -725,6 +725,24 @@
           },
           "product": {
             "$ref": "#/components/schemas/Product"
+          }
+        },
+        "additionalProperties": false
+      },
+      "OrderProductDTO": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "productId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "product": {
+            "$ref": "#/components/schemas/ProductDTO"
           }
         },
         "additionalProperties": false

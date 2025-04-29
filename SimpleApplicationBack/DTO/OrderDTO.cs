@@ -10,7 +10,6 @@ namespace SimpleApplicationBack.DTO
         public string? Comment { get; set; }
         public int? Number { get; set; }
         public DateTime? Date { get; set; }
-
-        public List<OrderProduct> OrderProducts { get; set; }
+        public List<OrderProductDTO> OrderProducts { get; set; }
     }
 }

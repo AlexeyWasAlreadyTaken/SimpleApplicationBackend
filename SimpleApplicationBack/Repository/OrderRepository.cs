@@ -15,7 +15,7 @@ namespace SimpleApplicationBack.Repository
         public ICollection<Order> GetOrders()
         {
 
-            return _context.Orders.Include(o => o.OrderProducts).ToList();
+            return _context.Orders.Include(o => o.OrderProducts).ThenInclude(op => op.Product).ToList();
         }
         public ICollection<OrderProduct> GetOrdersProducts(Guid orderId)
         {

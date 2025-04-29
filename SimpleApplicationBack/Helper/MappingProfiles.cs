@@ -10,8 +10,12 @@ namespace SimpleApplicationBack.Helper
         {
             CreateMap<Product, ProductDTO>();
             CreateMap<ProductDTO,Product>();
-            CreateMap<Order,OrderDTO>();
+
+
+            CreateMap<Order, OrderDTO>();
+            CreateMap<OrderProduct, OrderProductDTO>();
             CreateMap<OrderDTO, Order>();
+            CreateMap<OrderProductDTO, OrderProduct>();
         }
     }
 }
