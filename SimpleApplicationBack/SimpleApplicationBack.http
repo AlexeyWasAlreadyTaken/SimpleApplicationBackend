@@ -1,0 +1,6 @@
+@SimpleApplicationBack_HostAddress = http://localhost:5067
+
+GET {{SimpleApplicationBack_HostAddress}}/ProductController/
+Accept: application/json
+
+###
