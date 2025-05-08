@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Net.WebSockets;
+using Microsoft.EntityFrameworkCore;
 using SimpleApplicationBack.Data;
 using SimpleApplicationBack.Interfaces;
 using SimpleApplicationBack.Models;
@@ -35,6 +36,18 @@ namespace SimpleApplicationBack.Repository
         }
         public bool CreateOrder(Order order)
         {
+            order.Id = Guid.NewGuid();
+            List<OrderProduct> opl = new List<OrderProduct>();
+
+            foreach (var op in order.OrderProducts)
+            {
+                op.Id = Guid.NewGuid();
+                op.OrderId = order.Id;
+                opl.Add(op);
+            }
+
+            //_context.Add(opl);
+            //Save();
             _context.Add(order);
             return Save();
         }

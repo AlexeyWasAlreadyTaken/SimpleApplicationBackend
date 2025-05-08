@@ -21,6 +21,16 @@ namespace SimpleApplicationBack
             builder.Services.AddScoped<IProductRepository, ProductRepository>();
             builder.Services.AddScoped<IOrderRepository, OrderRepository>();
             builder.Services.AddDbContext<SimpleApplicationDataBaseContext>();
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowFrontend",
+                    policy =>
+                    {
+                        policy.WithOrigins("http://localhost:5173")
+                              .AllowAnyHeader()
+                              .AllowAnyMethod();
+                    });
+            });
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -31,6 +41,8 @@ namespace SimpleApplicationBack
             }
 
             app.UseHttpsRedirection();
+
+            app.UseCors("AllowFrontend");
 
             app.UseAuthorization();
 
