@@ -116,6 +116,7 @@ namespace SimpleApplicationBack.Controllers
         [ProducesResponseType(404)]
         public IActionResult DeleteOrder(Guid OrderId)
         {
+            //TODO 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
